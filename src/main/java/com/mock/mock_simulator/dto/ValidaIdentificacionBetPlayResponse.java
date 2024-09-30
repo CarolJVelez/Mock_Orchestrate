@@ -13,11 +13,11 @@ import lombok.Data;
 public class ValidaIdentificacionBetPlayResponse {
 
 
-    private String statusCode;
-    private String statusDesc;
-    private long tipoDocCliente;
-    private long ccCliente;
-    private boolean activoDepositos;
-    private boolean activoRetiros;
+    private String status_code;
+    private String status_desc;
+    private long tipo_doc_cliente;
+    private long cc_cliente;
+    private boolean activo_depositos;
+    private boolean activo_retiros;
 
 }

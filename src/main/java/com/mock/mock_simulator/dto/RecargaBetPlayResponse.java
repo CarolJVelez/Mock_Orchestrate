@@ -13,8 +13,8 @@ import lombok.Data;
 public class RecargaBetPlayResponse {
 
 
-    private String statusCode;
-    private String statusDesc;
+    private String status_code;
+    private String status_desc;
     private String nseguridad;
 
 }

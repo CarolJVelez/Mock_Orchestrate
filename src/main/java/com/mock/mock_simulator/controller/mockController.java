@@ -1,19 +1,21 @@
 package com.mock.mock_simulator.controller;
 
-import com.mock.mock_simulator.dto.ErrorResponse;
-import com.mock.mock_simulator.dto.RecargaBetPlayRequest;
-import com.mock.mock_simulator.dto.ValidaIdentificacionBetPlayRequest;
-import com.mock.mock_simulator.dto.ValidaIdentificacionBetPlayResponse;
+import com.mock.mock_simulator.dto.*;
+import com.mock.mock_simulator.service.IserviceFirma;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 
 @RestController
 @RequestMapping("/alianzasb2b/v1")
 public class mockController {
+
+
+    @Autowired
+    private IserviceFirma iserviceFirma;
+
 
     @PostMapping("/consultaplayer")
     public ResponseEntity<?> ValidarCedula(
@@ -23,7 +25,11 @@ public class mockController {
             @RequestHeader String firmaEnviada
 
     ) {
-        String firmaGenerada = generarFirma(validaIdentificacionBetPlayRequest,apiKey,token);
+        System.out.println("validaIdentificacionBetPlayRequest "+ validaIdentificacionBetPlayRequest);
+        String firmaGenerada = iserviceFirma.generarFirma(
+                validaIdentificacionBetPlayRequest.getUid_transaccion(),
+                String.valueOf(validaIdentificacionBetPlayRequest.getId_b2b()),
+                apiKey,token);
         if(firmaGenerada.equals(firmaEnviada)){
 
             if (validaIdentificacionBetPlayRequest.getId_b2b() == null) {
@@ -58,12 +64,12 @@ public class mockController {
                 return ResponseEntity.badRequest().body(errorResponse);
             }
             ValidaIdentificacionBetPlayResponse successResponse = new ValidaIdentificacionBetPlayResponse();
-            successResponse.setStatusCode("200");
-            successResponse.setStatusDesc("Consulta exitosa");
-            successResponse.setTipoDocCliente(validaIdentificacionBetPlayRequest.getTipo_doc_cliente());
-            successResponse.setCcCliente(validaIdentificacionBetPlayRequest.getCc_cliente());
-            successResponse.setActivoDepositos(true);
-            successResponse.setActivoRetiros(false);
+            successResponse.setStatus_code("200");
+            successResponse.setStatus_desc("Consulta exitosa");
+            successResponse.setTipo_doc_cliente(validaIdentificacionBetPlayRequest.getTipo_doc_cliente());
+            successResponse.setCc_cliente(validaIdentificacionBetPlayRequest.getCc_cliente());
+            successResponse.setActivo_depositos(true);
+            successResponse.setActivo_retiros(false);
 
             return ResponseEntity.ok(successResponse);
         }else{
@@ -83,17 +89,21 @@ public class mockController {
             @RequestHeader String firmaEnviada
 
     ) {
-        String firmaGenerada = generarFirma(recargaBetPlayRequest,apiKey,token);
+        String firmaGenerada = iserviceFirma.generarFirma(
+                recargaBetPlayRequest.getUid_transaccion(),
+                String.valueOf(recargaBetPlayRequest.getId_b2b()),
+                apiKey,token);
+
         if(firmaGenerada.equals(firmaEnviada)){
 
-            if (validaIdentificacionBetPlayRequest.getId_b2b() == null) {
+            if (recargaBetPlayRequest.getId_b2b() == null) {
                 ErrorResponse errorResponse = new ErrorResponse();
                 errorResponse.setStatus_code("101");
                 errorResponse.setStatus_desc(" Campo ID_B2B vacío o inexistente");
                 return ResponseEntity.badRequest().body(errorResponse);
             }
 
-            if (!validaIdentificacionBetPlayRequest.getCc_cliente().equals(79484192L)) {
+            if (!recargaBetPlayRequest.getCc_cliente().equals(79484192L)) {
                 ErrorResponse errorResponse = new ErrorResponse();
                 errorResponse.setStatus_code("107");
                 errorResponse.setStatus_desc("Jugador no registrado");
@@ -111,8 +121,8 @@ public class mockController {
             calFin.set(Calendar.SECOND, 0);
             System.out.println("carolv " + calInicio);
 
-            if (validaIdentificacionBetPlayRequest.getFecha_transaccion().before(calInicio.getTime()) ||
-                    validaIdentificacionBetPlayRequest.getFecha_transaccion().after(calFin.getTime())) {
+            if (recargaBetPlayRequest.getFecha_transaccion().before(calInicio.getTime()) ||
+                    recargaBetPlayRequest.getFecha_transaccion().after(calFin.getTime())) {
                 System.out.println("Entre al else3 inciial carolv");
                 ErrorResponse errorResponse = new ErrorResponse();
                 errorResponse.setStatus_code("110");
@@ -120,13 +130,10 @@ public class mockController {
                 return ResponseEntity.badRequest().body(errorResponse);
             }
             System.out.println("Entre al exitoso inciial carolv");
-            ValidaIdentificacionBetPlayResponse successResponse = new ValidaIdentificacionBetPlayResponse();
-            successResponse.setStatusCode("200");
-            successResponse.setStatusDesc("Consulta exitosa");
-            successResponse.setTipoDocCliente(validaIdentificacionBetPlayRequest.getTipo_doc_cliente());
-            successResponse.setCcCliente(validaIdentificacionBetPlayRequest.getCc_cliente());
-            successResponse.setActivoDepositos(true);
-            successResponse.setActivoRetiros(false);
+            RecargaBetPlayResponse successResponse = new RecargaBetPlayResponse();
+            successResponse.setStatus_code("200");
+            successResponse.setStatus_desc("Depósito exitoso");
+            successResponse.setNseguridad("2a196e0971dc36bed0c4");
 
             return ResponseEntity.ok(successResponse);
         }else{
@@ -142,7 +149,7 @@ public class mockController {
 
 
 
-
+/*
     public String generarFirma(ValidaIdentificacionBetPlayRequest validaIdentificacionBetPlayRequest,
                                String apiKey,
                                String token) {
@@ -158,7 +165,6 @@ public class mockController {
             String firma = calcularSHA256(resultado);
 
             return firma;
-
     }
 
     private String calcularSHA256(String datosHeader) {
@@ -181,6 +187,6 @@ public class mockController {
             System.out.println("Error al calcular el hash SHA-256" + e);
             return "error";
         }
-    }
+    }*/
 
 }
