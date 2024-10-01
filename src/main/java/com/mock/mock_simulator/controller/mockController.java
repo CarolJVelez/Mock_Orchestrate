@@ -64,7 +64,7 @@ public class mockController {
                 return ResponseEntity.badRequest().body(errorResponse);
             }
             ValidaIdentificacionBetPlayResponse successResponse = new ValidaIdentificacionBetPlayResponse();
-            successResponse.setStatus_code("200");
+            successResponse.setStatus_code("0");
             successResponse.setStatus_desc("Consulta exitosa");
             successResponse.setTipo_doc_cliente(validaIdentificacionBetPlayRequest.getTipo_doc_cliente());
             successResponse.setCc_cliente(validaIdentificacionBetPlayRequest.getCc_cliente());
@@ -131,7 +131,7 @@ public class mockController {
             }
             System.out.println("Entre al exitoso inciial carolv");
             RecargaBetPlayResponse successResponse = new RecargaBetPlayResponse();
-            successResponse.setStatus_code("200");
+            successResponse.setStatus_code("0");
             successResponse.setStatus_desc("Depósito exitoso");
             successResponse.setNseguridad("2a196e0971dc36bed0c4");
 
